@@ -1,18 +1,13 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ResourceSpawner : MonoBehaviour
-{    
-    [SerializeField] private Transform _spawnPointsParent;    
-    
-    private ResourceSpawnPoint[] _spawnPoints;
+{
+    private List<ResourceSpawnPoint> _spawnPoints = new();
 
     private void Awake()
     {
-        _spawnPoints = new ResourceSpawnPoint[_spawnPointsParent.childCount];
-
-        for (int i = 0; i < _spawnPoints.Length; i++)
-            if (_spawnPointsParent.GetChild(i).TryGetComponent(out ResourceSpawnPoint spawnPoint))
-                _spawnPoints[i] = spawnPoint;
+        GetComponentsInChildren(_spawnPoints);
     }
 
     private void Start()

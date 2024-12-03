@@ -21,8 +21,8 @@ public class Player : DamageablePerson
     private PlayerContactDetector _contactDetector;
     private Enemy _target;
 
-    public event Action<int> CoinCountChanged;    
-    
+    public event Action<int> CoinCountChanged;
+
     public int ÑoinCount { get; private set; }
 
     private void Awake()
@@ -42,6 +42,8 @@ public class Player : DamageablePerson
         _contactDetector.CoinPickedUp += AddCoin;
         _contactDetector.HealingPotionPickedUp += Heal;
         _contactDetector.OnDeathZoneEnter += TakeHit;
+        _inputReader.JumpKeyPressed += OnJump;
+        _inputReader.AttackKeyPressed += OnAttack;
     }
 
     private void OnDisable()
@@ -49,29 +51,15 @@ public class Player : DamageablePerson
         _contactDetector.CoinPickedUp -= AddCoin;
         _contactDetector.HealingPotionPickedUp -= Heal;
         _contactDetector.OnDeathZoneEnter -= TakeHit;
+        _inputReader.JumpKeyPressed -= OnJump;
+        _inputReader.AttackKeyPressed -= OnAttack;
     }
 
     private void FixedUpdate()
     {
-        if (IsDead == false)
-        {
+        if (IsDead == false)        
             if (_inputReader.Direction != 0)
                 _mover.Move(_inputReader.Direction);
-
-            if (_inputReader.GetIsJump() && _groundDetector.IsGround)
-            {
-                _mover.Jump();
-                _animator.Jump();
-            }
-
-            if (_inputReader.GetIsAttack())
-            {
-                if (_targetDetector.TryGetTarget(_attacker.AttackRange, out _target))
-                    _attacker.Attack(_target);
-
-                _animator.Attack();
-            }
-        }
     }
 
     private void Update()
@@ -108,4 +96,26 @@ public class Player : DamageablePerson
         CoinCountChanged?.Invoke(ÑoinCount);
     }
 
+    private void OnJump()
+    {
+        if (IsDead == false)
+        {
+            if (_groundDetector.IsGround)
+            {
+                _mover.Jump();
+                _animator.Jump();
+            }
+        }
+    }
+
+    private void OnAttack()
+    {
+        if (IsDead == false)
+        {
+            if (_targetDetector.TryGetTarget(_attacker.AttackRange, out _target))
+                _attacker.Attack(_target);
+
+            _animator.Attack();
+        }
+    }
 }

@@ -8,11 +8,13 @@ public class EnemySpawner : MonoBehaviour
 
     private Enemy _enemy;
     private Vector2 _startPosition;
+    private WaitForSeconds _waitRespawnDelay;
 
     private void Awake()
     {
         _enemy = GetComponent<Enemy>();
-        _startPosition = transform.position;
+        _waitRespawnDelay = new WaitForSeconds(_respawnDelay);
+        _startPosition = transform.position;        
     }
 
     private void OnEnable()
@@ -32,7 +34,7 @@ public class EnemySpawner : MonoBehaviour
 
     private IEnumerator SpawnWithDelay()
     {
-        yield return new WaitForSeconds(_respawnDelay);        
+        yield return _waitRespawnDelay;
 
         transform.position = _startPosition;
         _enemy.Revive();

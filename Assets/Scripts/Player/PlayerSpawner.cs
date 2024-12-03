@@ -8,10 +8,12 @@ public class PlayerSpawner : MonoBehaviour
 
     private Player _player;
     private Vector2 _startPosition;
+    private WaitForSeconds _waitRespawnDelay;
 
     private void Awake()
     {
         _player = GetComponent<Player>();
+        _waitRespawnDelay = new WaitForSeconds(_respawnDelay);
         _startPosition = transform.position;
     }
 
@@ -32,7 +34,7 @@ public class PlayerSpawner : MonoBehaviour
 
     private IEnumerator SpawnWithDelay()
     {
-        yield return new WaitForSeconds(_respawnDelay);
+        yield return _waitRespawnDelay;
 
         transform.position = _startPosition;
         _player.Revive();

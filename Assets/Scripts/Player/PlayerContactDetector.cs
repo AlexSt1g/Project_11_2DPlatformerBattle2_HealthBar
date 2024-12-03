@@ -22,15 +22,15 @@ public class PlayerContactDetector : MonoBehaviour
             OnDeathZoneEnter?.Invoke(_player.Health);
         }
 
-        if (collision.TryGetComponent<ICollectable>(out _))
+        if (collision.TryGetComponent(out ICollectable resource))
         {
-            if (collision.TryGetComponent(out Coin coin))
+            if (resource is Coin coin)
             {
                 coin.PickUp();
                 CoinPickedUp?.Invoke();
             }
 
-            else if (collision.TryGetComponent(out HealingPotion healingPotion))
+            else if (resource is HealingPotion healingPotion)
             {
                 if (_player.Health < _player.MaxHealth)
                 {

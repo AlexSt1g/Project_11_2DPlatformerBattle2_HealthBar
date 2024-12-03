@@ -10,10 +10,12 @@ public class HealthView : MonoBehaviour
 
     private CanvasGroup _canvasGroup;
     private float _alphaTurnOffDelay = 1f;
+    private WaitForSeconds _waitAlphaTurnOffDelay;
 
     private void Awake()
     {
-        _canvasGroup = GetComponent<CanvasGroup>();  
+        _canvasGroup = GetComponent<CanvasGroup>();
+        _waitAlphaTurnOffDelay = new WaitForSeconds(_alphaTurnOffDelay);
     }
 
     private void Start()
@@ -45,8 +47,8 @@ public class HealthView : MonoBehaviour
     }
 
     private IEnumerator TurnOffAlphaWithDelay()
-    {
-        yield return new WaitForSeconds(_alphaTurnOffDelay);
+    {        
+        yield return _waitAlphaTurnOffDelay;
 
         _canvasGroup.alpha = 0;
     }

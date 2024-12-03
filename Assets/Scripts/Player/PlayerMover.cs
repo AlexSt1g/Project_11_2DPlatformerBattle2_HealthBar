@@ -28,12 +28,12 @@ public class PlayerMover : MonoBehaviour
 
     private void TurnInDirection(float direction)
     {
-        float TurnLeftYAxisDegreese = 180;
-        float TurnRightYAxisDegreese = 0;
+        float turnLeftYAxisDegreese = 180;
+        float turnRightYAxisDegreese = 0;
 
         if (direction < 0)
-            transform.rotation = Quaternion.Euler(0, TurnLeftYAxisDegreese, 0);
+            transform.rotation = Quaternion.Euler(0, turnLeftYAxisDegreese, 0);
         else
-            transform.rotation = Quaternion.Euler(0, TurnRightYAxisDegreese, 0);
+            transform.rotation = Quaternion.Euler(0, turnRightYAxisDegreese, 0);
     }
 }

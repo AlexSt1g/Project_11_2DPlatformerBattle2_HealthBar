@@ -7,19 +7,20 @@ public class EnemyAttacker : MonoBehaviour
 {
     [SerializeField] private int _damage = 25;    
     [SerializeField] private float _attackDelay = 1.5f;
+    [SerializeField] private EnemyAttackRangeScanner _attackRangeScanner;
 
     private Enemy _enemy;
     private Coroutine _coroutine;
+    private WaitForSeconds _waitAttackDelay;
 
-    public event Action Attacked;
-    
-    [field: SerializeField] public float AttackRange { get; private set; } = 1f;
+    public event Action Attacked;    
 
     public bool IsAttacking { get; private set; }
 
     private void Awake()
     {
         _enemy = GetComponent<Enemy>();
+        _waitAttackDelay = new WaitForSeconds(_attackDelay);
     }
 
     public void Attack(Player target)
@@ -37,13 +38,13 @@ public class EnemyAttacker : MonoBehaviour
 
     private IEnumerator AttackWithDelay(Player target)
     {
-        IsAttacking = true;    
+        IsAttacking = true;
 
-        yield return new WaitForSeconds(_attackDelay);
+        yield return _waitAttackDelay;
 
         Attacked?.Invoke();        
 
-        if (_enemy.IsDead == false && _enemy.GetTargetInAttackRangeStatus())
+        if (_enemy.IsDead == false && _attackRangeScanner.IsAttackEnable)
             target.TakeHit(_damage);
 
         IsAttacking = false;

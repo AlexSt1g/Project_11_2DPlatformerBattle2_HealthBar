@@ -30,16 +30,6 @@ public class EnemyMover : MonoBehaviour
         transform.position = Vector2.MoveTowards(transform.position, targetPositionHorizontal, _speed * Time.deltaTime);
     }
 
-    public Transform GetFirstWaypoint()
-    {
-        return _waypoints[0];
-    }
-
-    public Transform GetLastWaypoint()
-    {
-        return _waypoints[_waypoints.Length - 1];
-    }
-
     public bool GetRunningStatus()
     {
         return _currentPosition.x != transform.position.x;
@@ -47,12 +37,12 @@ public class EnemyMover : MonoBehaviour
 
     private void TurnInMovingDirection()
     {
-        float TurnLeftYAxisDegreese = 180;
-        float TurnRightYAxisDegreese = 0;
+        float turnLeftYAxisDegreese = 180;
+        float turnRightYAxisDegreese = 0;
 
         if (transform.position.x < _currentPosition.x)
-            transform.rotation = Quaternion.Euler(0, TurnLeftYAxisDegreese, 0);
+            transform.rotation = Quaternion.Euler(0, turnLeftYAxisDegreese, 0);
         else if (transform.position.x > _currentPosition.x)
-            transform.rotation = Quaternion.Euler(0, TurnRightYAxisDegreese, 0);
+            transform.rotation = Quaternion.Euler(0, turnRightYAxisDegreese, 0);
     }
 }

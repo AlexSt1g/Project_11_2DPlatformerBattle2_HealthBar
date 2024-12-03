@@ -8,6 +8,12 @@ public class ResourceSpawnPoint : MonoBehaviour
 
     private Transform _resource; 
     private ICollectable _iCollectableComponent;
+    private WaitForSeconds _waitRespawnTime;
+
+    private void Awake()
+    {
+        _waitRespawnTime = new WaitForSeconds(_respawnTime);
+    }
 
     private void OnDisable()
     {       
@@ -27,12 +33,12 @@ public class ResourceSpawnPoint : MonoBehaviour
     {
         _resource.gameObject.SetActive(false);
 
-        StartCoroutine(RespawnWithDelay(_respawnTime));
+        StartCoroutine(RespawnWithDelay());
     }
 
-    private IEnumerator RespawnWithDelay(float delay)
+    private IEnumerator RespawnWithDelay()
     {
-        yield return new WaitForSeconds(delay);
+        yield return _waitRespawnTime;
 
         _resource.gameObject.SetActive(true);
     }

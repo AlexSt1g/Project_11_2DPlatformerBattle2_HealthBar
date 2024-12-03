@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerTargetDetector : MonoBehaviour
 {
-    [SerializeField] private LayerMask _targetLayer;    
+    [SerializeField] private LayerMask _targetLayer;
 
     public bool TryGetTarget(float attackRange, out Enemy target)
     {

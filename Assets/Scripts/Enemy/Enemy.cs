@@ -1,41 +1,41 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(EnemyMover))]
-[RequireComponent(typeof(EnemyTargetDetector))]
 [RequireComponent(typeof(EnemyAnimationController))]
 [RequireComponent(typeof(EnemyAttacker))]
 [RequireComponent(typeof(Rigidbody2D))]
 public class Enemy : DamageablePerson
-{
-    private EnemyMover _mover;
-    private EnemyTargetDetector _targetDetector;
+{    
+    [SerializeField] private EnemyTargetDetector _targetDetector;
+    [SerializeField] private EnemyAttackRangeScanner _attackRangeScanner;
+    
+    private EnemyMover _mover;    
     private EnemyAnimationController _animator;
     private EnemyAttacker _attacker;
     private Rigidbody2D _rigibody;
     private Player _target;
-    private Transform _targetTransform;
-    private Collider2D _targetCollider;
+    private Transform _targetTransform;    
 
     private void Awake()
     {
-        _mover = GetComponent<EnemyMover>();
-        _targetDetector = GetComponent<EnemyTargetDetector>();
+        _mover = GetComponent<EnemyMover>();        
         _animator = GetComponent<EnemyAnimationController>();
         _attacker = GetComponent<EnemyAttacker>();
         _rigibody = GetComponent<Rigidbody2D>();        
-        Health = MaxHealth;
+        Health = MaxHealth;        
     }
 
     private void OnEnable()
     {
-        _targetDetector.Detected += TakeTarget;
+        _targetDetector.Detected += OnTargetDetected;
+        _targetDetector.Lost += OnTargetLost;
         _attacker.Attacked += AnimateAttack;
     }
 
     private void OnDisable()
     {
-        _targetDetector.Detected -= TakeTarget;
+        _targetDetector.Detected -= OnTargetDetected;
+        _targetDetector.Lost -= OnTargetLost;
         _attacker.Attacked -= AnimateAttack;
     }
 
@@ -44,8 +44,8 @@ public class Enemy : DamageablePerson
         if (IsDead == false)
         {
             if (_target)
-            {
-                if (GetTargetInAttackRangeStatus())
+            {                
+                if (_attackRangeScanner.IsAttackEnable)
                 {
                     if (_attacker.IsAttacking == false && _target.Health > 0)
                         _attacker.Attack(_target);
@@ -53,13 +53,6 @@ public class Enemy : DamageablePerson
                 else if (_attacker.IsAttacking == false)
                 {
                     _mover.FollowTarget(_targetTransform);
-                }
-
-                if (GetTargetInPatrolAreaStatus() == false)
-                {
-                    ClearTarget();
-
-                    _attacker.EndAttack();
                 }
             }
             else
@@ -69,11 +62,6 @@ public class Enemy : DamageablePerson
 
             _animator.UpdateMove(_mover.GetRunningStatus());
         }
-    }
-
-    public bool GetTargetInAttackRangeStatus()
-    {
-        return Physics2D.OverlapCircle(transform.position, _attacker.AttackRange) == _targetCollider;
     }
 
     public override void TakeHit(int damageValue)
@@ -101,27 +89,21 @@ public class Enemy : DamageablePerson
         _animator.SetLifeStatus(IsDead);
     }
 
-    private void TakeTarget(Player target)
+    private void OnTargetDetected(Player target)
     {
         _target = target;
         _targetTransform = target.GetComponent<Transform>();
-        _targetCollider = target.GetComponent<Collider2D>();
     }
 
-    private void ClearTarget()
+    private void OnTargetLost()
     {
         _target = null;
-        _targetDetector.ClearTarget();
+        _attacker.EndAttack();
     }
 
     private void AnimateAttack()
     {
         if (IsDead == false)
             _animator.Attack();
-    }
-
-    private bool GetTargetInPatrolAreaStatus()
-    {
-        return Physics2D.OverlapArea(_mover.GetFirstWaypoint().position, _mover.GetLastWaypoint().position) == _targetCollider;
     }
 }
